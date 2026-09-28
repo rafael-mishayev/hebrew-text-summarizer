@@ -22,6 +22,7 @@ def test_home_renders_an_rtl_form_with_medium_selected(client):
 
     assert response.status_code == 200
     assert '<html dir="rtl" lang="he">' in response.text
+    assert '<label for="text"' in response.text
     assert checked_length(response.text) == "medium"
 
 

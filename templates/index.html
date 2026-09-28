@@ -92,8 +92,9 @@
             border-radius: 8px;
         }
 
-        /* Hidden visually only: display:none would also remove the radios
-           from keyboard focus and the accessibility tree. */
+        /* Hidden visually only: display:none would also remove these from
+           keyboard focus and the accessibility tree. */
+        .visually-hidden,
         .options input[type="radio"] {
             position: absolute;
             width: 1px;
@@ -192,6 +193,7 @@
             <!-- maxlength mirrors MAX_INPUT_CHARACTERS from the backend. It is a
                  convenience only; summarize_text() re-checks the length, since
                  the attribute is trivial to bypass. -->
+            <label for="text" class="visually-hidden">הטקסט לסיכום</label>
             <textarea
                 id="text"
                 name="text"
