@@ -1,20 +1,26 @@
 # Hebrew Text Summarizer
 
-An AI-powered web application for summarizing Hebrew texts, built with Python and FastAPI.
+[![Tests](https://github.com/rafael-mishayev/hebrew-text-summarizer/actions/workflows/test.yml/badge.svg)](https://github.com/rafael-mishayev/hebrew-text-summarizer/actions/workflows/test.yml)
 
-The application provides full RTL support, three configurable summary lengths, asynchronous AI requests, input validation, and safe error handling.
+A web application that summarizes Hebrew text with an LLM, built with Python and
+FastAPI. Paste a text, pick a summary length, and get a fluent Hebrew summary in a
+fully right-to-left interface that works even with JavaScript turned off.
 
 ## Features
 
-- AI-powered Hebrew text summarization
-- Three summary lengths: short, medium, and detailed
-- Full RTL user interface
-- Asynchronous OpenRouter API calls
-- Input validation and maximum text length enforcement
-- Safe error handling without exposing internal exception details
-- Explicit rate-limit handling
-- Basic logging
-- Automated tests
+- **Three summary lengths** - short (2-3 sentences), medium (5-7) or detailed (10-15).
+- **Right-to-left, server-rendered UI** - every page is rendered on the server, so
+  the form works without JavaScript; the script only adds a live character counter
+  and a loading state.
+- **Keyboard-accessible** - the styled length selector keeps real radio buttons
+  underneath, with a visible focus ring.
+- **Prompt-injection hardening** - instructions and user text travel in separate
+  messages, and the text is fenced and explicitly marked as data.
+- **Async model calls** - requests to OpenRouter never block the event loop.
+- **Server-side validation** - the length is an enum, and empty or oversized input
+  (over 20,000 characters) is rejected before any request is sent.
+- **Safe, Hebrew error messages** - internal details are logged, never shown, and a
+  provider rate limit (HTTP 429) is reported separately from an outage.
 
 ## Tech Stack
 
@@ -22,7 +28,7 @@ The application provides full RTL support, three configurable summary lengths, a
 - **AI Provider:** OpenRouter
 - **Model:** Google Gemini 2.5 Flash
 - **Frontend:** HTML, CSS, Jinja2
-- **Testing:** Pytest, Pytest-Asyncio
+- **Testing:** Pytest, Pytest-Asyncio, FastAPI TestClient
 
 ## Design Decisions
 
@@ -56,27 +62,32 @@ The server does not rely on frontend controls for correctness.
 
 ### Safe error handling
 
-Internal exception details are logged but are never returned directly to the user.
+Internal exception details, including a missing API key, are logged but are never returned directly to the user.
 
-Rate-limit failures are handled separately from general API failures.
+Rate-limit failures are handled separately from general API failures, so the user is told to retry shortly rather than that the service is down.
 
 ## Project Structure
 
 ```text
 hebrew-text-summarizer/
-├── main.py
-├── summarizer.py
+├── main.py                  # routes; maps exceptions to safe messages
+├── summarizer.py            # prompt building and the OpenRouter call
 ├── templates/
-│   └── index.html
+│   └── index.html           # RTL page, inline CSS, optional JS
 ├── tests/
-│   └── test_summarizer.py
+│   ├── conftest.py          # fake OpenRouter client
+│   ├── test_summarizer.py
+│   └── test_app.py
+├── .github/workflows/
+│   └── test.yml             # CI on Python 3.12 and 3.13
 ├── requirements.txt
 ├── pytest.ini
-├── .env.example
-└── README.md
+└── .env.example
 ```
 
 ## Getting Started
+
+Requires Python 3.12 or newer.
 
 1. Clone the repository:
 
@@ -132,3 +143,16 @@ http://127.0.0.1:8000
 ```bash
 pytest
 ```
+
+The suite replaces the OpenRouter client with a fake, so it needs no API key and
+no network access. It covers:
+
+- **Validation** - empty and oversized input are rejected before any request, and
+  text exactly at the cap is accepted.
+- **Prompt construction** - for every length, instructions go in the system message
+  and the source text is fenced inside the user message.
+- **Failure handling** - rate limits, API failures, empty responses and a missing
+  API key each map to the right exception and are logged.
+- **Routes** - the RTL form, keeping input after submission, rejecting unknown
+  lengths with 422, HTML-escaping model output, and error pages that never leak
+  internal details.
