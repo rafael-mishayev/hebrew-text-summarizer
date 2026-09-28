@@ -7,7 +7,7 @@ FastAPI. Paste a text, pick a summary length, and get a fluent Hebrew summary in
 fully right-to-left interface that works even with JavaScript turned off.
 
 <p align="center">
-  <img src="docs/screenshot.png" alt="A Hebrew paragraph about the revival of the Hebrew language, summarized at medium length" width="700">
+  <img src="docs/screenshot.png" alt="A Hebrew paragraph about the revival of the Hebrew language, summarized in three sentences" width="700">
 </p>
 
 ## Features
