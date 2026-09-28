@@ -6,6 +6,10 @@ A web application that summarizes Hebrew text with an LLM, built with Python and
 FastAPI. Paste a text, pick a summary length, and get a fluent Hebrew summary in a
 fully right-to-left interface that works even with JavaScript turned off.
 
+<p align="center">
+  <img src="docs/screenshot.png" alt="A Hebrew paragraph about the revival of the Hebrew language, summarized at medium length" width="700">
+</p>
+
 ## Features
 
 - **Three summary lengths** - short (2-3 sentences), medium (5-7) or detailed (10-15).
