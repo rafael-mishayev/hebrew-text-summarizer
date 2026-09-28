@@ -79,12 +79,12 @@ async def summarize(
         error = str(exc)
     except SummarizationRateLimitError:
         # Transient by nature, so the message invites an immediate retry.
-        error = "The summarization service is temporarily busy. Please try again shortly."
+        error = "שירות הסיכום עמוס כרגע. נסה שוב בעוד רגע."
     except SummarizationError:
         # Deliberately generic. The specific cause was already logged by the
         # summarizer; exposing it here would leak provider and configuration
         # details to anyone using the page.
-        error = "The summarization service is currently unavailable. Please try again later."
+        error = "שירות הסיכום אינו זמין כרגע. נסה שוב מאוחר יותר."
 
     # The original text and the selected length are echoed back so a failed or
     # successful submission does not clear the form.

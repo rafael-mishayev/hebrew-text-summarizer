@@ -93,6 +93,7 @@ def _create_client() -> AsyncOpenAI:
     api_key = os.getenv("OPENROUTER_API_KEY")
 
     if not api_key:
+        logger.error("OPENROUTER_API_KEY is not configured")
         raise SummarizationError("OPENROUTER_API_KEY is not configured.")
 
     # OpenRouter exposes an OpenAI-compatible API, so the official SDK works
@@ -130,12 +131,11 @@ async def summarize_text(
     # two conditions the user can actually fix, which lets the route surface
     # these messages verbatim while keeping provider errors generic.
     if not cleaned_text:
-        raise ValueError("Text cannot be empty.")
+        raise ValueError("הטקסט ריק. הדבק טקסט לסיכום.")
 
     if len(cleaned_text) > MAX_INPUT_CHARACTERS:
         raise ValueError(
-            f"Text is too long. Maximum allowed length is "
-            f"{MAX_INPUT_CHARACTERS:,} characters."
+            f"הטקסט ארוך מדי. האורך המרבי הוא {MAX_INPUT_CHARACTERS:,} תווים."
         )
 
     # Fence the source text between explicit delimiters and restate that it is
