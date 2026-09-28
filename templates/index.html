@@ -82,6 +82,7 @@
         }
 
         .options label {
+            position: relative;
             display: flex;
             align-items: center;
             gap: 6px;
@@ -91,11 +92,21 @@
             border-radius: 8px;
         }
 
-        /* The native radio is hidden and its label is styled instead, which
-           allows a button-like control while keeping real radio semantics
-           for keyboard and screen-reader users. */
+        /* Hidden visually only: display:none would also remove the radios
+           from keyboard focus and the accessibility tree. */
         .options input[type="radio"] {
-            display: none;
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: 0;
+            opacity: 0;
+            overflow: hidden;
+            clip-path: inset(50%);
+        }
+
+        .options label:has(input:focus-visible) {
+            outline: 3px solid #4361ee;
+            outline-offset: 2px;
         }
 
         .options input[type="radio"]:checked + span {
